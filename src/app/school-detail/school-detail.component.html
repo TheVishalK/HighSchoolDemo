@@ -1,0 +1,6 @@
+@for(item of school; track item){
+    <p>{{item.school_name}}</p>
+    @for(field of item | keyvalue; track field){
+        <p><strong>{{ field.key }}:</strong> {{ field.value }}</p>
+      }
+}

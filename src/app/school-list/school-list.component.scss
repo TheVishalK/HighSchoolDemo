@@ -1,0 +1,35 @@
+.container {
+    display: flex;
+    height: 100vh; /* Full viewport height */
+  }
+
+  .left {
+    width: 250px; /* Width of the left panel */
+    background-color: #f4f4f4;
+    padding: 15px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .left ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .left ul li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .left ul li:hover {
+    background-color: #ddd;
+    cursor: pointer;
+  }
+
+  .right {
+    flex-grow: 1; /* Takes the remaining space */
+    padding: 20px;
+  }
+
+  .right h1 {
+    margin-top: 0;
+  }

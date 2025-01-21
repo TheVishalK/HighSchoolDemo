@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="left">
+      <h3>Schools List</h3>
+      <ul>
+        @for(item of dataList;track item.dbn){
+            <li (click)="showSchoolDetail(item.dbn)" >{{item.dbn}}</li>
+        }
+    </ul>
+    </div>
+
+    <div class="right">
+      <h1>School Detail</h1>
+      <app-school-detail [school]="selectedSchool"></app-school-detail>
+    </div>
+  </div>
