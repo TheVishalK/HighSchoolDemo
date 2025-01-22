@@ -1,15 +1,43 @@
-<div class="container">
-    <div class="left">
-      <h3>Schools List</h3>
-      <ul>
-        @for(item of dataList;track item.dbn){
-            <li (click)="showSchoolDetail(item.dbn)" >{{item.dbn}}</li>
-        }
-    </ul>
-    </div>
+<!-- src/app/school-list/school-list.component.html -->
+@if(loading()){
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+</div>
+}
 
-    <div class="right">
-      <h1>School Detail</h1>
-      <app-school-detail [school]="selectedSchool"></app-school-detail>
-    </div>
+@if(error()){
+  <div>
+    <p class="error">{{ error() }}</p>
   </div>
+}
+
+@if(!loading() && !error()){
+<div class="container">
+  <div class="list">
+      <h3>List of Items</h3>
+      <ul>
+        @for(school of schools();track school){
+          <li>
+            <a href="javascript:void(0)" (click)="onSelectSchool(school.dbn)">
+              {{ school.school_name }}
+            </a>
+          </li>
+        }
+      </ul>
+  </div>
+
+  @if(selectedSchool){
+  <div class="content">
+      <h3>School Details</h3>
+      <app-school-detail [school]="selectedSchool"></app-school-detail>
+      <hr>
+      <h3>{{ selectedSchool.school_name }}</h3>
+      <p><strong>Location:</strong> {{ selectedSchool.location }}</p>
+      <p><strong>Contact:</strong> {{ selectedSchool.website }}</p>
+      <p><strong>Boro:</strong> {{ selectedSchool.boro }}</p>
+      <p><strong>Staff Count:</strong> {{ selectedSchool.dbn }}</p>
+  </div>
+}
+</div>
+}
+

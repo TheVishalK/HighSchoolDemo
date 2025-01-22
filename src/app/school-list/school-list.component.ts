@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
-import { SchoolService } from '../school.service';
+import { Component, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { catchError, of, tap } from 'rxjs';
+import { School } from '../models/school';
+import { SchoolDetails } from '../models/school-detail';
+import { SchoolService } from '../school.service';
 import { SchoolDetailComponent } from '../school-detail/school-detail.component';
-import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-school-list',
@@ -13,26 +15,41 @@ import { KeyValuePipe } from '@angular/common';
   providers: []
 })
 export class SchoolListComponent {
-  dataList : any;
-  selectedSchool:any;
+  schools = signal<School[]>([]); // Using Angular signals for reactive data
+  selectedSchool: School|SchoolDetails | null = null;
+  loading = signal<boolean>(false);
+  error = signal<string | null>(null);
 
   constructor(private schoolService: SchoolService, private router: Router){
-      this.schoolService.fetchSchools().subscribe((data)=>{
-        this.dataList = data;
-        console.log(this.dataList);
-      });
+      this.fetchSchools();
   }
 
-  showSchoolDetail(dbn:any){
-    console.log("showSchoolDetail", dbn);
-    const schools  = Array.from(this.dataList);
-    // schools.filter((item) => item.dbn === dbn);
-    // this.dataList = this.dataList.filt
-
-    // //Route to dumb component with school data
-    //this.router.navigate(['/detail', dbn]);
-    console.log("CheckType", typeof this.dataList);
-    
-    this.selectedSchool = this.dataList.filter((item:any) =>item.dbn === dbn);
+  fetchSchools() {
+    this.loading.set(true);
+    this.schoolService.fetchSchools().pipe(
+      tap(() => this.loading.set(false)),  // Hide loading after the request completes
+      catchError((error) => {
+        this.error.set('Failed to fetch schools');
+        this.loading.set(false);
+        return of([]); // Fallback to empty array
+      })
+    ).subscribe((schools) => {
+      this.schools.set(schools);
+    });
   }
+
+  onSelectSchool(schoolId: string) {
+    this.loading.set(true);
+    this.schoolService.fetchSchool(schoolId).pipe(
+      tap(() => this.loading.set(false)),
+      catchError((error) => {
+        this.error.set('Failed to fetch school details');
+        this.loading.set(false);
+        return of({} as SchoolDetails);  // Fallback to empty object
+      })
+    ).subscribe((details) => {
+      this.selectedSchool = details;
+    });
+  }
+
 }
